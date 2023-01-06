@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
 
 # dbをimportする
 from apps.app import db
 # Userクラスをimportする
 from apps.crud.models import User
+from apps.crud.forms import UserForm
 
 # Blueprintでcrudアプリを生成する
 crud = Blueprint(
@@ -22,3 +23,22 @@ def index():
 def sql():
   db.session.query(User).all()
   return "コンソールログを確認してください"
+
+@crud.route("/users/new", methods=["GET", "POST"])
+def create_user():
+  # UserFormをインスタンス化する
+  form = UserForm()
+  # フォームの値をバリデートする
+  if form.validate_on_submit():
+    # ユーザーを作成する
+    user = User(
+      username=form.username.data,
+      email=form.email.data,
+      password=form.password.data,
+    )
+    # ユーザーを追加してコミットする
+    db.session.add(user)
+    db.session.commit()
+    # ユーザー一覧画面へリダイレクトする
+    return redirect(url_for("crud.users"))
+  return render_template("crud/create.html", form=form)
