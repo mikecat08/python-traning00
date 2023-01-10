@@ -42,3 +42,9 @@ def create_user():
     # ユーザー一覧画面へリダイレクトする
     return redirect(url_for("crud.users"))
   return render_template("crud/create.html", form=form)
+
+@crud.route("/users")
+def users():
+  # ユーザーの一覧を取得する
+  users = User.query.all()
+  return render_template("crud/index.html", users=users)
