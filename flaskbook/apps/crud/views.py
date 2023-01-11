@@ -48,3 +48,29 @@ def users():
   # ユーザーの一覧を取得する
   users = User.query.all()
   return render_template("crud/index.html", users=users)
+
+@crud.route("/users/<user_id>", methods=["GET", "POST"])
+def edit_user(user_id):
+  form = UserForm()
+
+  # Userモデルを利用してユーザーを取得する
+  user = User.query.filter_by(id=user_id).first()
+
+  # formからサブミットされた場合はユーザーを更新しユーザーの一覧画面へリダイレクトする
+  if form.validate_on_submit():
+    user.username = form.username.data
+    user.email = form.email.data
+    user.password = form.password.data
+    db.session.add(user)
+    db.session.commit()
+    return redirect(url_for("crud.users"))
+
+  # GETの場合はHTMLを返す
+  return render_template("crud/edit.html", user=user, form=form)
+
+@crud.route("/users/<user_id>/delete", methods=["POST"])
+def delete_user(user_id):
+  user = User.query.filter_by(id=user_id).first()
+  db.session.delete(user)
+  db.session.commit()
+  return redirect(url_for("crud.users"))
