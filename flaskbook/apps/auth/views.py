@@ -3,7 +3,7 @@ from apps.auth.forms import SignUpForm, LoginForm
 from apps.crud.models import User
 
 from flask import Blueprint, render_template, flash, url_for, redirect, request
-from flask_login import login_user
+from flask_login import login_user, logout_user
 
 # Blueprintを使ってauthを生成する
 auth = Blueprint(
@@ -67,3 +67,9 @@ def login():
 
   # ログインに失敗した場合はログイン画面に戻る
   return render_template("auth/login.html", form=form)
+
+# logoutエンドポイントを作成
+@auth.route("/logout")
+def logout():
+  logout_user()
+  return redirect(url_for("auth.login"))
