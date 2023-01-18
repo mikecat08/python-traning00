@@ -10,3 +10,14 @@ class UserImage(db.Model):
   image_path = db.Column(db.String)
   is_detected = db.Column(db.Boolean, default=False)
   update_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
+# db.Modelを継承したUserImageTagクラスを作成する
+class UserImageTag(db.Model):
+  # テーブル名を指定する
+  __tablename__ = "user_image_tags"
+  id = db.Column(db.Integer, primary_key=True)
+  # user_image_idはuser_imagesテーブルのidカラムの外部キーとして設定する
+  user_image_id = db.Column(db.String, db.ForeignKey("user_images.id"))
+  tag_name = db.Column(db.String)
+  created_at = db.Column(db.DateTime, default=datetime.now)
+  updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
